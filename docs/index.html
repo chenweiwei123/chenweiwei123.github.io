@@ -2,112 +2,136 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <title>我的导航页</title>
+  <title>分组导航页</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       margin: 0;
-      font-family: "Segoe UI", Roboto, sans-serif;
-      background: linear-gradient(to right, #f0f2f5, #e4ecf4);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
       padding: 40px 20px;
+      font-family: "Helvetica Neue", sans-serif;
+      background: #f0f2f5;
     }
 
     h1 {
+      text-align: center;
       font-size: 36px;
-      color: #333;
-      margin-bottom: 30px;
-      letter-spacing: 1px;
+      color: #222;
+      margin-bottom: 40px;
     }
 
-    .nav-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      width: 100%;
+    .group-card {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+      margin: 0 auto 30px auto;
+      padding: 20px 24px;
       max-width: 900px;
     }
 
+    .group-title {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 18px;
+      color: #007BFF;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 8px;
+    }
+
+    .nav-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
     .nav-item {
-      background-color: #fff;
-      border-radius: 16px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-      text-align: center;
-      padding: 20px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      cursor: pointer;
+      display: flex;
+      align-items: center;
+      background: #f9f9f9;
+      border-radius: 10px;
+      padding: 10px 16px;
+      text-decoration: none;
+      color: #333;
+      font-size: 16px;
+      transition: background 0.3s ease, transform 0.3s ease;
+      flex: 1 1 200px;
     }
 
     .nav-item:hover {
-      transform: translateY(-6px) scale(1.03);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    }
-
-    .nav-item a {
-      text-decoration: none;
-      color: #333;
-      font-size: 20px;
-      font-weight: 500;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      transition: color 0.3s;
-    }
-
-    .nav-item a:hover {
-      color: #007BFF;
+      background: #e6f0ff;
+      transform: translateY(-2px);
     }
 
     .nav-icon {
-      font-size: 30px;
-      margin-bottom: 10px;
+      font-size: 22px;
+      margin-right: 12px;
       transition: transform 0.3s ease;
     }
 
     .nav-item:hover .nav-icon {
-      transform: scale(1.2) rotate(5deg);
+      transform: scale(1.2) rotate(8deg);
     }
 
     @media (max-width: 600px) {
       h1 {
         font-size: 28px;
       }
+
+      .nav-item {
+        flex: 1 1 100%;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>✨ 我的导航页 ✨</h1>
-  <div class="nav-container" id="navContainer"></div>
+  <h1>🌐 我的技术导航页</h1>
+  <div id="navRoot"></div>
 
   <script>
-    // ✅ 配置导航项
-    const navLinks = [
-      { name: '百度', url: 'https://www.baidu.com', icon: '🔍' },
-      { name: 'Google', url: 'https://www.google.com', icon: '🌐' },
-      { name: 'GitHub', url: 'https://github.com', icon: '💻' },
-      { name: '知乎', url: 'https://www.zhihu.com', icon: '🧠' },
-      { name: 'Bilibili', url: 'https://www.bilibili.com', icon: '🎬' }
-    ];
+    // 分组配置
+    const groupedNavLinks = {
+      "常用网站": [
+        { name: "百度", url: "https://www.baidu.com", icon: "🔍" },
+        { name: "Google", url: "https://www.google.com", icon: "🌐" },
+        { name: "知乎", url: "https://www.zhihu.com", icon: "🧠" },
+        { name: "Bilibili", url: "https://www.bilibili.com", icon: "🎬" }
+      ],
+      "基础工具": [
+        { name: "GitHub", url: "https://github.com", icon: "💻" },
+        { name: "Stack Overflow", url: "https://stackoverflow.com", icon: "🧰" },
+        { name: "W3School", url: "https://www.w3school.com.cn", icon: "📚" },
+        { name: "MDN", url: "https://developer.mozilla.org/zh-CN/", icon: "🧾" }
+      ]
+    };
 
-    const navContainer = document.getElementById('navContainer');
+    const navRoot = document.getElementById("navRoot");
 
-    navLinks.forEach(link => {
-      const div = document.createElement('div');
-      div.className = 'nav-item';
-      div.innerHTML = `
-        <a href="${link.url}" target="_blank">
+    for (const [groupName, links] of Object.entries(groupedNavLinks)) {
+      const groupCard = document.createElement("div");
+      groupCard.className = "group-card";
+
+      const title = document.createElement("div");
+      title.className = "group-title";
+      title.textContent = groupName;
+
+      const navList = document.createElement("div");
+      navList.className = "nav-list";
+
+      links.forEach(link => {
+        const a = document.createElement("a");
+        a.className = "nav-item";
+        a.href = link.url;
+        a.target = "_blank";
+        a.innerHTML = `
           <div class="nav-icon">${link.icon}</div>
-          ${link.name}
-        </a>
-      `;
-      navContainer.appendChild(div);
-    });
+          <div>${link.name}</div>
+        `;
+        navList.appendChild(a);
+      });
+
+      groupCard.appendChild(title);
+      groupCard.appendChild(navList);
+      navRoot.appendChild(groupCard);
+    }
   </script>
 </body>
 </html>
