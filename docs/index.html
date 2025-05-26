@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <title>分组导航页</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Font Awesome 图标库 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
   <style>
     body {
       margin: 0;
@@ -16,11 +20,25 @@
       text-align: center;
       font-size: 36px;
       color: #222;
-      margin-bottom: 40px;
+      margin-bottom: 20px;
+    }
+
+    .search-box {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .search-box input {
+      padding: 10px 14px;
+      font-size: 16px;
+      width: 280px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      outline: none;
     }
 
     .group-card {
-      background: #ffffff;
+      background: #fff;
       border-radius: 12px;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
       margin: 0 auto 30px auto;
@@ -46,14 +64,16 @@
     .nav-item {
       display: flex;
       align-items: center;
+      justify-content: space-between;
       background: #f9f9f9;
       border-radius: 10px;
       padding: 10px 16px;
       text-decoration: none;
       color: #333;
       font-size: 16px;
-      transition: background 0.3s ease, transform 0.3s ease;
       flex: 1 1 200px;
+      transition: background 0.3s ease, transform 0.3s ease;
+      position: relative;
     }
 
     .nav-item:hover {
@@ -61,9 +81,14 @@
       transform: translateY(-2px);
     }
 
+    .nav-left {
+      display: flex;
+      align-items: center;
+    }
+
     .nav-icon {
-      font-size: 22px;
-      margin-right: 12px;
+      font-size: 20px;
+      margin-right: 10px;
       transition: transform 0.3s ease;
     }
 
@@ -71,67 +96,147 @@
       transform: scale(1.2) rotate(8deg);
     }
 
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 28px;
-      }
+    .fav-icon {
+      color: #ccc;
+      cursor: pointer;
+      font-size: 16px;
+      transition: color 0.3s;
+    }
 
-      .nav-item {
-        flex: 1 1 100%;
-      }
+    .fav-icon.active {
+      color: gold;
+    }
+
+    .hidden {
+      display: none !important;
     }
   </style>
 </head>
 <body>
-  <h1>🌐 我的技术导航页</h1>
-  <div id="navRoot"></div>
+<h1>🌐 我的导航页</h1>
 
-  <script>
-    // 分组配置
-    const groupedNavLinks = {
-      "常用网站": [
-        { name: "百度", url: "https://www.baidu.com", icon: "🔍" },
-        { name: "Google", url: "https://www.google.com", icon: "🌐" },
-        { name: "知乎", url: "https://www.zhihu.com", icon: "🧠" },
-        { name: "Bilibili", url: "https://www.bilibili.com", icon: "🎬" }
-      ],
-      "基础工具": [
-        { name: "GitHub", url: "https://github.com", icon: "💻" },
-        { name: "Stack Overflow", url: "https://stackoverflow.com", icon: "🧰" },
-        { name: "W3School", url: "https://www.w3school.com.cn", icon: "📚" },
-        { name: "MDN", url: "https://developer.mozilla.org/zh-CN/", icon: "🧾" }
-      ]
-    };
+<div class="search-box">
+  <input type="text" id="searchInput" placeholder="搜索网站名称...">
+</div>
 
-    const navRoot = document.getElementById("navRoot");
+<div id="navRoot"></div>
 
-    for (const [groupName, links] of Object.entries(groupedNavLinks)) {
-      const groupCard = document.createElement("div");
-      groupCard.className = "group-card";
+<script>
+  // 模拟从 nav.json 读取的结构
+  const navData = {
+    "常用网站": [
+      { name: "百度", url: "https://www.baidu.com", icon: "fa-solid fa-magnifying-glass" },
+      { name: "Google", url: "https://www.google.com", icon: "fa-brands fa-google" },
+      { name: "知乎", url: "https://www.zhihu.com", icon: "fa-solid fa-lightbulb" },
+      { name: "掘金酱", url: "https://e.juejin.cn/#/", icon: "fa-solid fa-tv" }
+    ],
+    "基础工具": [
+      { name: "GitHub", url: "https://github.com", icon: "fa-brands fa-github" },
+      { name: "Stack Overflow", url: "https://stackoverflow.com", icon: "fa-brands fa-stack-overflow" },
+      { name: "W3School", url: "https://www.w3school.com.cn", icon: "fa-solid fa-book" },
+      { name: "马丁学编程", url: "https://nageoffer.com/", icon: "fa-solid fa-code" }
+    ]
+  };
 
-      const title = document.createElement("div");
-      title.className = "group-title";
-      title.textContent = groupName;
+  const navRoot = document.getElementById("navRoot");
+  const searchInput = document.getElementById("searchInput");
+  const allNavItems = [];
 
-      const navList = document.createElement("div");
-      navList.className = "nav-list";
+  // 从 localStorage 获取收藏夹
+  const favoriteUrls = new Set(JSON.parse(localStorage.getItem("favorites") || "[]"));
 
-      links.forEach(link => {
-        const a = document.createElement("a");
-        a.className = "nav-item";
-        a.href = link.url;
-        a.target = "_blank";
-        a.innerHTML = `
-          <div class="nav-icon">${link.icon}</div>
-          <div>${link.name}</div>
+  // 添加收藏夹分组
+  function renderFavorites() {
+    const favorites = [];
+    for (const [group, items] of Object.entries(navData)) {
+      for (const item of items) {
+        if (favoriteUrls.has(item.url)) {
+          favorites.push(item);
+        }
+      }
+    }
+    if (favorites.length > 0) {
+      renderGroup("⭐ 收藏夹", favorites, true);
+    }
+  }
+
+  // 渲染单个分组
+  function renderGroup(title, links, isFavorites = false) {
+    const groupCard = document.createElement("div");
+    groupCard.className = "group-card";
+
+    const titleEl = document.createElement("div");
+    titleEl.className = "group-title";
+    titleEl.textContent = title;
+
+    const navList = document.createElement("div");
+    navList.className = "nav-list";
+
+    links.forEach(link => {
+      const a = document.createElement("a");
+      a.className = "nav-item";
+      a.href = link.url;
+      a.target = "_blank";
+
+      const left = document.createElement("div");
+      left.className = "nav-left";
+      left.innerHTML = `
+          <i class="nav-icon ${link.icon}"></i>
+          <div class="nav-name">${link.name}</div>
         `;
-        navList.appendChild(a);
+
+      const fav = document.createElement("i");
+      fav.className = "fa-star fav-icon fas";
+      if (favoriteUrls.has(link.url)) {
+        fav.classList.add("active");
+      }
+
+      fav.addEventListener("click", e => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (favoriteUrls.has(link.url)) {
+          favoriteUrls.delete(link.url);
+          fav.classList.remove("active");
+        } else {
+          favoriteUrls.add(link.url);
+          fav.classList.add("active");
+        }
+        localStorage.setItem("favorites", JSON.stringify([...favoriteUrls]));
+        // 重新渲染收藏夹
+        renderAll();
       });
 
-      groupCard.appendChild(title);
-      groupCard.appendChild(navList);
-      navRoot.appendChild(groupCard);
+      a.appendChild(left);
+      a.appendChild(fav);
+      navList.appendChild(a);
+      if (!isFavorites) {
+        allNavItems.push({ element: a, name: link.name.toLowerCase() });
+      }
+    });
+
+    groupCard.appendChild(titleEl);
+    groupCard.appendChild(navList);
+    navRoot.appendChild(groupCard);
+  }
+
+  // 渲染所有分组（含收藏夹）
+  function renderAll() {
+    navRoot.innerHTML = "";
+    renderFavorites();
+    for (const [group, links] of Object.entries(navData)) {
+      renderGroup(group, links);
     }
-  </script>
+  }
+
+  renderAll();
+
+  // 搜索过滤
+  searchInput.addEventListener("input", function () {
+    const keyword = this.value.trim().toLowerCase();
+    allNavItems.forEach(({ element, name }) => {
+      element.classList.toggle("hidden", !name.includes(keyword));
+    });
+  });
+</script>
 </body>
 </html>
