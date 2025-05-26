@@ -31,6 +31,19 @@
       backdrop-filter: blur(6px);
       z-index: -1;
     }
+    .wallpaper-toggle {
+      text-align: center;
+      margin-bottom: 30px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 12px;
+      background-color: #f9f9f9;
+    }
+
+    .wallpaper-toggle summary {
+      font-size: 16px;
+      cursor: pointer;
+    }
 
     /* 新增壁纸设置面板样式 */
     .wallpaper-controls {
@@ -165,19 +178,21 @@
 </head>
 <body>
 <h1>🌐 我的导航页</h1>
-<div class="wallpaper-controls">
-  <span>选择壁纸：</span>
-  <div id="wallpaperOptions" style="display:inline-block;"></div>
-  <span class="toggle-btn" id="toggleDaily">每日一图：开</span>
-  <input type="file" id="uploadWallpaper" accept="image/*" style="display: none;" />
-  <label for="uploadWallpaper" class="toggle-btn">上传自定义壁纸</label>
-</div>
 <div class="search-box">
   <input type="text" id="searchInput" placeholder="搜索网站名称...">
 </div>
 
 <div id="navRoot"></div>
-
+<details id="dailyWallpaperToggle" class="wallpaper-toggle">
+  <summary>每日壁纸设置</summary>
+  <div class="wallpaper-controls">
+    <span>选择壁纸：</span>
+    <div id="wallpaperOptions" style="display:inline-block;"></div>
+    <span class="toggle-btn" id="toggleDaily">切换每日模式</span>
+    <input type="file" id="uploadWallpaper" accept="image/*" style="display: none;" />
+    <label for="uploadWallpaper" class="toggle-btn">上传自定义壁纸</label>
+  </div>
+</details>
 <script>
   // 模拟从 nav.json 读取的结构
   const navData = {
@@ -186,6 +201,8 @@
       { name: "Google", url: "https://www.google.com", icon: "fa-brands fa-google" },
       { name: "知乎", url: "https://www.zhihu.com", icon: "fa-solid fa-lightbulb" },
       { name: "掘金酱", url: "https://e.juejin.cn/#/", icon: "fa-solid fa-tv" }
+      { name: "掘金酱123", url: "https://e.juejin.cn/#/", icon: "fa-solid fa-tv" }
+
     ],
     "基础工具": [
       { name: "GitHub", url: "https://github.com", icon: "fa-brands fa-github" },
@@ -316,10 +333,13 @@
       document.body.style.backgroundImage = `url('https://source.unsplash.com/1920x1080/?nature')`;
       toggleBtn.textContent = "每日一图：开";
     } else {
-      const custom = localStorage.getItem(wallpaperKey);
-      if (custom) {
-        document.body.style.backgroundImage = `url('${custom}')`;
+      let custom = localStorage.getItem(wallpaperKey);
+      if (!custom) {
+        // 首次访问，随机选一张壁纸
+        custom = wallpapers[Math.floor(Math.random() * wallpapers.length)];
+        localStorage.setItem(wallpaperKey, custom);
       }
+      document.body.style.backgroundImage = `url('${custom}')`;
       toggleBtn.textContent = "每日一图：关";
     }
   }
@@ -356,6 +376,15 @@
 
   renderWallpaperOptions();
   applyWallpaper();
+  document.getElementById("dailyWallpaperToggle").addEventListener("toggle", function () {
+    if (!this.open) {
+      // 折叠时可执行的操作（如释放资源）
+    } else {
+      // 展开时可执行的操作（如刷新壁纸列表）
+      renderWallpaperOptions();
+    }
+  });
 </script>
+
 </body>
 </html>
