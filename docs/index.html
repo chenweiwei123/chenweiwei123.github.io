@@ -178,11 +178,6 @@
 </head>
 <body>
 <h1>🌐 我的导航页</h1>
-<div class="search-box">
-  <input type="text" id="searchInput" placeholder="搜索网站名称...">
-</div>
-
-<div id="navRoot"></div>
 <details id="dailyWallpaperToggle" class="wallpaper-toggle">
   <summary>每日壁纸设置</summary>
   <div class="wallpaper-controls">
@@ -193,6 +188,12 @@
     <label for="uploadWallpaper" class="toggle-btn">上传自定义壁纸</label>
   </div>
 </details>
+<div class="search-box">
+  <input type="text" id="searchInput" placeholder="搜索网站名称...">
+</div>
+
+<div id="navRoot"></div>
+
 <script>
   // 模拟从 nav.json 读取的结构
   const navData = {
