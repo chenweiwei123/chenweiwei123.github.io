@@ -30,14 +30,21 @@
       background: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(6px);
       z-index: -1;
+      padding-bottom: 150px; /* 防止内容被固定定位元素遮挡 */
     }
     .wallpaper-toggle {
-      text-align: center;
-      margin-bottom: 30px;
+      position: fixed;
+      bottom: 0;
+      right: 10px; /* 距离右边适当调整 */
+      z-index: 1000;
+      background-color: #f9f9f9;
       border: 1px solid #ddd;
       border-radius: 8px;
       padding: 12px;
-      background-color: #f9f9f9;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: auto;
+      max-width: calc(100% - 20px);
+      text-align: center;
     }
 
     .wallpaper-toggle summary {
@@ -120,11 +127,21 @@
     }
 
     .nav-list {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* 默认三列 */
       gap: 16px;
     }
+    @media (max-width: 960px) {
+      .nav-list {
+        grid-template-columns: repeat(2, 1fr); /* 小屏下两列 */
+      }
+    }
 
+    @media (max-width: 600px) {
+      .nav-list {
+        grid-template-columns: 1fr; /* 手机端单列 */
+      }
+    }
     .nav-item {
       display: flex;
       align-items: center;
@@ -138,11 +155,6 @@
       flex: 1 1 200px;
       transition: background 0.3s ease, transform 0.3s ease;
       position: relative;
-    }
-
-    .nav-item:hover {
-      background: #e6f0ff;
-      transform: translateY(-2px);
     }
 
     .nav-left {
@@ -177,7 +189,9 @@
   </style>
 </head>
 <body>
-<h1>🌐 我的导航页</h1>
+<h1 style="text-align: -moz-left;">
+    我的导航页 <i class="fas fa-rocket" style="color: #007bff;"></i>
+</h1>
 <details id="dailyWallpaperToggle" class="wallpaper-toggle">
   <summary>每日壁纸设置</summary>
   <div class="wallpaper-controls">
