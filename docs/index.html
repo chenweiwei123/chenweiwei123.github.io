@@ -10,29 +10,32 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --primary-color: #1a2250;
+      --primary-color: #4361ee;
       --secondary-color: #3f37c9;
       --accent-color: #4895ef;
       --light-color: #f8f9fa;
       --dark-color: #212529;
       --success-color: #4cc9f0;
-      --warning-color: #c11f6a;
+      --warning-color: #f72585;
       --border-radius: 12px;
       --box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
       --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      --sidebar-width: 220px;
     }
 
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
       margin: 0;
-      padding: 40px 20px;
+      padding: 0;
       font-family: 'Poppins', 'Helvetica Neue', sans-serif;
       background: center center no-repeat fixed;
       background-size: cover;
@@ -41,6 +44,8 @@
       transition: background-image 0.6s ease;
       min-height: 100vh;
       color: var(--dark-color);
+      display: grid;
+      grid-template-columns: var(--sidebar-width) 1fr;
     }
 
     body::before {
@@ -50,167 +55,90 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(8px);
       z-index: -1;
     }
 
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
-
-    /* 壁纸设置面板 */
-    .wallpaper-toggle {
+    /* 侧边栏样式 */
+    .sidebar {
       position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 1000;
-      background-color: rgba(255, 255, 255, 0.9);
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      border-radius: var(--border-radius);
-      padding: 12px 16px;
-      box-shadow: var(--box-shadow);
-      width: auto;
-      max-width: calc(100% - 40px);
-      transition: var(--transition);
-    }
-
-    .wallpaper-toggle:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
-    }
-
-    .wallpaper-toggle summary {
-      font-size: 16px;
-      font-weight: 500;
-      cursor: pointer;
-      color: var(--primary-color);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .wallpaper-toggle summary::after {
-      content: "⌄";
-      font-size: 18px;
-      transition: transform 0.2s;
-    }
-
-    .wallpaper-toggle[open] summary::after {
-      transform: rotate(-180deg);
-    }
-
-    .wallpaper-controls {
-      text-align: center;
-      margin-top: 15px;
-      padding-top: 15px;
-      border-top: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
-    .wallpaper-options {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin: 15px 0;
-    }
-
-    .wallpaper-option {
-      width: 80px;
-      height: 50px;
-      border-radius: 8px;
-      overflow: hidden;
-      border: 2px solid transparent;
-      cursor: pointer;
-      transition: var(--transition);
-      position: relative;
-    }
-
-    .wallpaper-option::after {
-      content: "";
-      position: absolute;
       top: 0;
       left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.3);
-      opacity: 0;
-      transition: opacity 0.3s;
+      width: var(--sidebar-width);
+      height: 100vh;
+      background: rgba(255, 255, 255, 0.95);
+      border-right: 1px solid rgba(0, 0, 0, 0.05);
+      padding: 30px 20px;
+      overflow-y: auto;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+      z-index: 100;
     }
 
-    .wallpaper-option:hover {
-      transform: scale(1.05);
-      border-color: var(--primary-color);
+    .sidebar-header {
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     }
 
-    .wallpaper-option:hover::after {
-      opacity: 1;
-    }
-
-    .wallpaper-option.selected {
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 2px white, 0 0 0 4px var(--primary-color);
-    }
-
-    .wallpaper-option.selected::after {
-      content: "✓";
-      color: white;
+    .sidebar-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--primary-color);
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      font-weight: bold;
-      opacity: 1;
-      background: rgba(67, 97, 238, 0.7);
     }
 
-    .btn {
-      display: inline-flex;
+    .sidebar-title i {
+      margin-right: 10px;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sidebar-link {
+      display: flex;
       align-items: center;
-      justify-content: center;
-      padding: 8px 16px;
-      background-color: var(--primary-color);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 14px;
+      padding: 10px 15px;
+      border-radius: 8px;
+      color: var(--dark-color);
+      text-decoration: none;
       font-weight: 500;
-      cursor: pointer;
       transition: var(--transition);
-      margin: 5px;
     }
 
-    .btn:hover {
-      background-color: var(--secondary-color);
-      transform: translateY(-2px);
+    .sidebar-link i {
+      margin-right: 10px;
+      width: 20px;
+      text-align: center;
     }
 
-    .btn-outline {
-      background-color: transparent;
-      border: 1px solid var(--primary-color);
+    .sidebar-link:hover, .sidebar-link.active {
+      background-color: rgba(67, 97, 238, 0.1);
       color: var(--primary-color);
     }
 
-    .btn-outline:hover {
-      background-color: rgba(67, 97, 238, 0.1);
+    /* 主内容区域 */
+    .main-content {
+      grid-column: 2;
+      padding: 40px 60px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
     }
 
-    .btn i {
-      margin-right: 6px;
-    }
-
-    /* 标题样式 */
+    /* 头部样式 */
     .header {
       text-align: center;
       margin-bottom: 40px;
-      position: relative;
     }
 
     .header h1 {
       font-size: 2.5rem;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--dark-color);
       margin: 0;
       display: inline-flex;
@@ -228,6 +156,12 @@
       transform: rotate(45deg) scale(1.2);
     }
 
+    .header .subtitle {
+      color: rgba(0, 0, 0, 0.6);
+      font-size: 1.1rem;
+      margin-top: 10px;
+    }
+
     /* 搜索框 */
     .search-box {
       text-align: center;
@@ -239,7 +173,7 @@
     }
 
     .search-box input {
-      padding: 12px 20px;
+      padding: 14px 24px;
       font-size: 16px;
       width: 100%;
       border: 2px solid rgba(0, 0, 0, 0.1);
@@ -260,7 +194,7 @@
       font-family: "Font Awesome 6 Free";
       font-weight: 900;
       position: absolute;
-      right: 20px;
+      right: 24px;
       top: 50%;
       transform: translateY(-50%);
       color: rgba(0, 0, 0, 0.3);
@@ -268,20 +202,16 @@
 
     /* 导航组 */
     .nav-group {
-      margin-bottom: 30px;
+      margin-bottom: 40px;
     }
 
     .group-card {
       background: rgba(255, 255, 255, 0.9);
       border-radius: var(--border-radius);
       box-shadow: var(--box-shadow);
-      margin: 0 auto 30px auto;
-      padding: 20px 24px;
-      max-width: 1000px;
+      padding: 25px 30px;
       transition: var(--transition);
       border: 1px solid rgba(0, 0, 0, 0.05);
-      margin-left: 0 !important;
-      margin-right: auto !important;
     }
 
     .group-card:hover {
@@ -296,29 +226,18 @@
       color: var(--primary-color);
       padding-bottom: 10px;
       border-bottom: 2px solid rgba(67, 97, 238, 0.1);
-      display: flex;             /* 原有 */
-      align-items: center;       /* 原有 */
-      white-space: nowrap;       /* 新增：确保文字不换行 */
+      display: flex;
+      align-items: center;
     }
 
     .group-title i {
-      font-size: 1.4rem;
-      font-weight: 600;
-      margin-bottom: 20px;
-      color: var(--primary-color);
-      padding-bottom: 10px;
-      border-bottom: 2px solid rgba(67, 97, 238, 0.1);
-      display: flex;
-      align-items: center;
-      text-align: left;
-      margin-right: 10px;
+      margin-right: 12px;
     }
 
     .nav-list {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 16px;
-      text-align: left;
     }
 
     @media (max-width: 768px) {
@@ -340,7 +259,7 @@
       justify-content: space-between;
       background: rgba(248, 249, 250, 0.8);
       border-radius: 10px;
-      padding: 14px 18px;
+      padding: 16px 20px;
       text-decoration: none;
       color: var(--dark-color);
       font-size: 16px;
@@ -448,12 +367,7 @@
       animation: fadeIn 0.4s ease forwards;
       opacity: 0;
     }
-    .toggle-btn {
-      margin-left: 10px;
-      cursor: pointer;
-      user-select: none;
-      font-size: 18px;
-    }
+
     /* 延迟动画 */
     .nav-item:nth-child(1) { animation-delay: 0.1s; }
     .nav-item:nth-child(2) { animation-delay: 0.2s; }
@@ -466,6 +380,146 @@
     .nav-item:nth-child(9) { animation-delay: 0.9s; }
     .nav-item:nth-child(10) { animation-delay: 1.0s; }
 
+    /* 壁纸设置面板 */
+    .wallpaper-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+      background-color: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: var(--border-radius);
+      padding: 12px 16px;
+      box-shadow: var(--box-shadow);
+      width: auto;
+      max-width: calc(100% - 40px);
+      transition: var(--transition);
+    }
+
+    .wallpaper-toggle:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    .wallpaper-toggle summary {
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--primary-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .wallpaper-toggle summary::after {
+      content: "⌄";
+      font-size: 18px;
+      transition: transform 0.2s;
+    }
+
+    .wallpaper-toggle[open] summary::after {
+      transform: rotate(-180deg);
+    }
+
+    .wallpaper-controls {
+      text-align: center;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .wallpaper-options {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 15px 0;
+    }
+
+    .wallpaper-option {
+      width: 80px;
+      height: 50px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .wallpaper-option::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .wallpaper-option:hover {
+      transform: scale(1.05);
+      border-color: var(--primary-color);
+    }
+
+    .wallpaper-option:hover::after {
+      opacity: 1;
+    }
+
+    .wallpaper-option.selected {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px white, 0 0 0 4px var(--primary-color);
+    }
+
+    .wallpaper-option.selected::after {
+      content: "✓";
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: bold;
+      opacity: 1;
+      background: rgba(67, 97, 238, 0.7);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 18px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      margin: 5px;
+    }
+
+    .btn:hover {
+      background-color: var(--secondary-color);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      border: 1px solid var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    .btn-outline:hover {
+      background-color: rgba(67, 97, 238, 0.1);
+    }
+
+    .btn i {
+      margin-right: 8px;
+    }
+
     /* 暗色模式 */
     @media (prefers-color-scheme: dark) {
       body {
@@ -476,23 +530,21 @@
         background: rgba(0, 0, 0, 0.7);
       }
 
-      .nav-item {
-        background: rgba(30, 30, 30, 0.8);
+      .sidebar {
+        background: rgba(30, 30, 30, 0.95);
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .sidebar-title, .sidebar-link {
         color: #f8f9fa;
       }
+
+      .sidebar-link:hover, .sidebar-link.active {
+        background-color: rgba(67, 97, 238, 0.2);
+      }
+
       .group-card {
-        background: rgba(255, 255, 255, 0.9);
-        border-radius: var(--border-radius);
-        box-shadow: var(--box-shadow);
-        margin: 0 auto 30px auto;
-        padding: 20px 24px;
-        max-width: 1000px;
-        transition: var(--transition);
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        margin-left: 0 !important;
-        margin-right: auto !important;
-        padding-left: 24px; /* 可选：微调左侧内边距 */
-        padding-right: 24px;
+        background: rgba(30, 30, 30, 0.8);
       }
 
       .nav-item {
@@ -507,50 +559,90 @@
       }
 
       .wallpaper-toggle {
-        background-color: rgba(30, 30, 30, 0.9);
+        background-color: rgba(30, 30, 30, 0.95);
         border-color: rgba(255, 255, 255, 0.1);
       }
 
       .wallpaper-toggle summary {
         color: var(--accent-color);
       }
-    }
-    #sidenav a:hover {
-      color: var(--primary-color);
+
+      .header .subtitle {
+        color: rgba(255, 255, 255, 0.6);
+      }
     }
 
-    @media (prefers-color-scheme: dark) {
-      #sidenav {
-        background-color: rgba(30, 30, 30, 0.95);
+    /* 响应式调整 */
+    @media (max-width: 992px) {
+      body {
+        grid-template-columns: 1fr;
       }
 
-      #sidenav a {
-        color: #f8f9fa;
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: static;
+        padding: 20px;
+        border-right: none;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
       }
 
-      #sidenav a:hover {
-        color: var(--accent-color);
+      .main-content {
+        grid-column: 1;
+        padding: 30px;
+      }
+
+      .sidebar-nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .sidebar-link {
+        padding: 8px 12px;
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .main-content {
+        padding: 20px;
+      }
+
+      .header h1 {
+        font-size: 2rem;
+      }
+
+      .search-box input {
+        padding: 12px 20px;
       }
     }
   </style>
 </head>
 <body>
-<div class="container">
+<!-- 侧边栏导航 -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h2 class="sidebar-title"><i class="fas fa-bars"></i> 导航菜单</h2>
+  </div>
+  <nav class="sidebar-nav" id="sidebarNav"></nav>
+</aside>
+
+<!-- 主内容区域 -->
+<main class="main-content">
   <header class="header">
     <h1>我的技术导航 <i class="fas fa-rocket icon"></i></h1>
     <p class="subtitle">快速访问您最喜爱的开发资源</p>
   </header>
-  <!-- 右侧悬浮目录 -->
-  <div id="sidenav" style="position: fixed; right: 20px; top: 50%; transform: translateY(-50%); background: rgba(255, 255, 255, 0.95); padding: 10px 16px;">
 
-  </div>
   <div class="search-box">
     <input type="text" id="searchInput" placeholder="搜索网站名称或关键词...">
   </div>
 
   <div id="navRoot"></div>
-</div>
+</main>
 
+<!-- 壁纸设置面板 -->
 <details id="dailyWallpaperToggle" class="wallpaper-toggle">
   <summary><i class="fas fa-image"></i> 壁纸设置</summary>
   <div class="wallpaper-controls">
@@ -560,8 +652,8 @@
     <label for="uploadWallpaper" class="btn btn-outline"><i class="fas fa-upload"></i> 上传壁纸</label>
   </div>
 </details>
-<script>
 
+<script>
   // 导航数据
   const navData = {
     "常用网站": [
@@ -594,37 +686,41 @@
   // DOM元素
   const navRoot = document.getElementById("navRoot");
   const searchInput = document.getElementById("searchInput");
+  const sidebarNav = document.getElementById("sidebarNav");
   const allNavItems = [];
 
   // 从 localStorage 获取收藏夹
   const favoriteUrls = new Set(JSON.parse(localStorage.getItem("favorites") || "[]"));
-  function renderSideNav() {
-    const sidenav = document.getElementById("sidenav");
-    sidenav.innerHTML = ""; // 清空旧内容
 
+  // 渲染侧边栏导航
+  function renderSidebar() {
+    sidebarNav.innerHTML = "";
+
+    // 添加收藏链接
+    const favoritesLink = document.createElement("a");
+    favoritesLink.href = "#favorites";
+    favoritesLink.className = "sidebar-link";
+    favoritesLink.innerHTML = '<i class="fas fa-star"></i>我的收藏';
+    favoritesLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      document.querySelector('[data-group="⭐ 我的收藏"]')?.scrollIntoView({ behavior: "smooth" });
+    });
+    sidebarNav.appendChild(favoritesLink);
+
+    // 添加其他分组链接
     for (const [group] of Object.entries(navData)) {
       const link = document.createElement("a");
       link.href = `#${group}`;
-      link.textContent = group;
-      link.style.display = "block";
-      link.style.color = "var(--dark-color)";
-      link.style.fontWeight = "500";
-      link.style.fontSize = "14px";
-      link.style.textDecoration = "none";
-      link.style.cursor = "pointer";
-
-      // 平滑滚动到对应锚点
-      link.addEventListener("click", function (e) {
+      link.className = "sidebar-link";
+      link.innerHTML = `<i class="${getGroupIcon(group)}"></i>${group}`;
+      link.addEventListener("click", (e) => {
         e.preventDefault();
-        const target = document.querySelector(`[data-group="${group}"]`);
-        if (target) {
-          target.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
+        document.querySelector(`[data-group="${group}"]`)?.scrollIntoView({ behavior: "smooth" });
       });
-
-      sidenav.appendChild(link);
+      sidebarNav.appendChild(link);
     }
   }
+
   // 渲染收藏夹
   function renderFavorites() {
     const favorites = [];
@@ -638,48 +734,34 @@
 
     if (favorites.length > 0) {
       renderGroup("⭐ 我的收藏", favorites, true);
+    } else {
+      // 添加空状态提示
+      const emptyFavorites = document.createElement("div");
+      emptyFavorites.className = "empty-state";
+      emptyFavorites.innerHTML = `
+        <i class="fas fa-star"></i>
+        <h3>暂无收藏</h3>
+        <p>点击导航项上的星号可以添加到收藏</p>
+      `;
+      navRoot.appendChild(emptyFavorites);
     }
   }
 
   // 渲染单个分组
   function renderGroup(title, links, isFavorites = false) {
-    const groupContainer = document.createElement("details");
-    groupContainer.open = true;
+    const groupContainer = document.createElement("div");
+    groupContainer.className = "nav-group";
     groupContainer.setAttribute("data-group", title);
-
-    const summary = document.createElement("summary");
-    summary.className = "group-title";
-    summary.style.display = "flex";
-    summary.style.justifyContent = "space-between";
-    summary.style.alignItems = "center";
-
-    const toggleBtn = document.createElement("span");
-    toggleBtn.className = "toggle-btn";
-    toggleBtn.textContent = groupContainer.open ? "▼" : "▶"; // 可选：初始图标
-    toggleBtn.style.marginLeft = "10px";
-    toggleBtn.style.cursor = "pointer";
-    toggleBtn.style.userSelect = "none";
-    toggleBtn.style.fontSize = "18px";
-
-    // 根据分组名获取图标
-    const groupIcon = getGroupIcon(title);
-    // summary.innerHTML = `<i class="${groupIcon}"></i>${title}`;
-    summary.innerHTML = `${title}`;
-    summary.appendChild(toggleBtn);
-    summary.style.justifyContent = "flex-start"; // 关键：让内容靠左排列
-
-    // 监听点击事件切换 open 状态
-    toggleBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      groupContainer.open = !groupContainer.open;
-      toggleBtn.textContent = groupContainer.open ? "▼" : "▶";
-    });
 
     const groupCard = document.createElement("div");
     groupCard.className = "group-card";
-    groupCard.setAttribute("data-group", title); // 添加锚点属性
+
+    const groupTitle = document.createElement("h2");
+    groupTitle.className = "group-title";
+
+    // 根据分组设置不同的图标
+    const groupIcon = getGroupIcon(title);
+    groupTitle.innerHTML = `<i class="${groupIcon}"></i>${title}`;
 
     const navList = document.createElement("div");
     navList.className = "nav-list";
@@ -692,13 +774,15 @@
       navItem.rel = "noopener noreferrer";
       navItem.style.animationDelay = `${index * 0.1}s`;
 
-      navItem.innerHTML = `      <div class="nav-left">
-        <i class="nav-icon ${link.icon}"></i>
-        <div class="nav-name">${link.name}</div>
-      </div>
-      <i class="fa-star fav-icon ${favoriteUrls.has(link.url) ? 'active fas' : 'far'}"></i>
-    `;
+      navItem.innerHTML = `
+        <div class="nav-left">
+          <i class="nav-icon ${link.icon}"></i>
+          <div class="nav-name">${link.name}</div>
+        </div>
+        <i class="fa-star fav-icon ${favoriteUrls.has(link.url) ? 'active fas' : 'far'}"></i>
+      `;
 
+      // 收藏按钮事件
       const favIcon = navItem.querySelector(".fav-icon");
       favIcon.addEventListener("click", (e) => {
         e.preventDefault();
@@ -716,7 +800,6 @@
 
         localStorage.setItem("favorites", JSON.stringify([...favoriteUrls]));
         renderAll();
-
       });
 
       navList.appendChild(navItem);
@@ -726,10 +809,9 @@
       }
     });
 
+    groupCard.appendChild(groupTitle);
     groupCard.appendChild(navList);
-    groupContainer.appendChild(summary);
     groupContainer.appendChild(groupCard);
-
     navRoot.appendChild(groupContainer);
   }
 
@@ -740,6 +822,7 @@
       case "开发工具": return "fas fa-tools";
       case "学习资源": return "fas fa-graduation-cap";
       case "设计资源": return "fas fa-palette";
+      case "⭐ 我的收藏": return "fas fa-star";
       default: return "fas fa-folder";
     }
   }
@@ -752,7 +835,8 @@
     for (const [group, links] of Object.entries(navData)) {
       renderGroup(group, links);
     }
-    renderSideNav();
+
+    renderSidebar();
   }
 
   // 初始化渲染
@@ -915,8 +999,6 @@
       renderWallpaperOptions();
     }
   });
-
 </script>
-
 </body>
 </html>
