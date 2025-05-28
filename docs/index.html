@@ -2,22 +2,45 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <title>分组导航页</title>
+  <title>技术导航页</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="个性化技术导航页面，快速访问常用开发资源">
 
   <!-- Font Awesome 图标库 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
   <style>
+    :root {
+      --primary-color: #1a2250;
+      --secondary-color: #3f37c9;
+      --accent-color: #4895ef;
+      --light-color: #f8f9fa;
+      --dark-color: #212529;
+      --success-color: #4cc9f0;
+      --warning-color: #c11f6a;
+      --border-radius: 12px;
+      --box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       padding: 40px 20px;
-      font-family: "Helvetica Neue", sans-serif;
+      font-family: 'Poppins', 'Helvetica Neue', sans-serif;
       background: center center no-repeat fixed;
       background-size: cover;
       position: relative;
       z-index: 0;
       transition: background-image 0.6s ease;
+      min-height: 100vh;
+      color: var(--dark-color);
     }
 
     body::before {
@@ -27,214 +50,582 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(6px);
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(8px);
       z-index: -1;
-      padding-bottom: 150px; /* 防止内容被固定定位元素遮挡 */
     }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* 壁纸设置面板 */
     .wallpaper-toggle {
       position: fixed;
-      bottom: 0;
-      right: 10px; /* 距离右边适当调整 */
+      bottom: 20px;
+      right: 20px;
       z-index: 1000;
-      background-color: #f9f9f9;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 12px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      background-color: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: var(--border-radius);
+      padding: 12px 16px;
+      box-shadow: var(--box-shadow);
       width: auto;
-      max-width: calc(100% - 20px);
-      text-align: center;
+      max-width: calc(100% - 40px);
+      transition: var(--transition);
+    }
+
+    .wallpaper-toggle:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
     }
 
     .wallpaper-toggle summary {
       font-size: 16px;
+      font-weight: 500;
       cursor: pointer;
+      color: var(--primary-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
-    /* 新增壁纸设置面板样式 */
+    .wallpaper-toggle summary::after {
+      content: "⌄";
+      font-size: 18px;
+      transition: transform 0.2s;
+    }
+
+    .wallpaper-toggle[open] summary::after {
+      transform: rotate(-180deg);
+    }
+
     .wallpaper-controls {
       text-align: center;
-      margin-bottom: 30px;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .wallpaper-options {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 15px 0;
     }
 
     .wallpaper-option {
-      display: inline-block;
-      width: 60px;
-      height: 40px;
-      margin: 0 8px;
-      border-radius: 6px;
+      width: 80px;
+      height: 50px;
+      border-radius: 8px;
       overflow: hidden;
       border: 2px solid transparent;
       cursor: pointer;
-      transition: transform 0.3s ease;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .wallpaper-option::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      transition: opacity 0.3s;
     }
 
     .wallpaper-option:hover {
-      transform: scale(1.1);
-      border-color: #007bff;
+      transform: scale(1.05);
+      border-color: var(--primary-color);
+    }
+
+    .wallpaper-option:hover::after {
+      opacity: 1;
     }
 
     .wallpaper-option.selected {
-      border-color: #007bff;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px white, 0 0 0 4px var(--primary-color);
     }
 
-    .toggle-btn {
-      display: inline-block;
-      margin-left: 12px;
+    .wallpaper-option.selected::after {
+      content: "✓";
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: bold;
+      opacity: 1;
+      background: rgba(67, 97, 238, 0.7);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 16px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 6px;
       font-size: 14px;
+      font-weight: 500;
       cursor: pointer;
-      color: #007bff;
+      transition: var(--transition);
+      margin: 5px;
     }
 
-    h1 {
+    .btn:hover {
+      background-color: var(--secondary-color);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      border: 1px solid var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    .btn-outline:hover {
+      background-color: rgba(67, 97, 238, 0.1);
+    }
+
+    .btn i {
+      margin-right: 6px;
+    }
+
+    /* 标题样式 */
+    .header {
       text-align: center;
-      font-size: 36px;
-      color: #222;
-      margin-bottom: 20px;
+      margin-bottom: 40px;
+      position: relative;
     }
 
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: 600;
+      color: var(--dark-color);
+      margin: 0;
+      display: inline-flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .header h1 .icon {
+      margin-left: 15px;
+      color: var(--primary-color);
+      transition: transform 0.5s ease;
+    }
+
+    .header h1:hover .icon {
+      transform: rotate(45deg) scale(1.2);
+    }
+
+    /* 搜索框 */
     .search-box {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 40px;
+      position: relative;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .search-box input {
-      padding: 10px 14px;
+      padding: 12px 20px;
       font-size: 16px;
-      width: 280px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
+      width: 100%;
+      border: 2px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50px;
       outline: none;
+      transition: var(--transition);
+      background-color: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .search-box input:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+    }
+
+    .search-box::after {
+      content: "\f002";
+      font-family: "Font Awesome 6 Free";
+      font-weight: 900;
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(0, 0, 0, 0.3);
+    }
+
+    /* 导航组 */
+    .nav-group {
+      margin-bottom: 30px;
     }
 
     .group-card {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
       margin: 0 auto 30px auto;
       padding: 20px 24px;
-      max-width: 900px;
+      max-width: 1000px;
+      transition: var(--transition);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      margin-left: 0 !important;
+      margin-right: auto !important;
+    }
+
+    .group-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
     }
 
     .group-title {
-      font-size: 22px;
+      font-size: 1.4rem;
       font-weight: 600;
-      margin-bottom: 18px;
-      color: #007BFF;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 8px;
+      margin-bottom: 20px;
+      color: var(--primary-color);
+      padding-bottom: 10px;
+      border-bottom: 2px solid rgba(67, 97, 238, 0.1);
+      display: flex;             /* 原有 */
+      align-items: center;       /* 原有 */
+      white-space: nowrap;       /* 新增：确保文字不换行 */
+    }
+
+    .group-title i {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: var(--primary-color);
+      padding-bottom: 10px;
+      border-bottom: 2px solid rgba(67, 97, 238, 0.1);
+      display: flex;
+      align-items: center;
+      text-align: left;
+      margin-right: 10px;
     }
 
     .nav-list {
       display: grid;
-      grid-template-columns: repeat(3, 1fr); /* 默认三列 */
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 16px;
+      text-align: left;
     }
-    @media (max-width: 960px) {
+
+    @media (max-width: 768px) {
       .nav-list {
-        grid-template-columns: repeat(2, 1fr); /* 小屏下两列 */
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
       }
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 480px) {
       .nav-list {
-        grid-template-columns: 1fr; /* 手机端单列 */
+        grid-template-columns: 1fr;
       }
     }
+
+    /* 导航项 */
     .nav-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: #f9f9f9;
+      background: rgba(248, 249, 250, 0.8);
       border-radius: 10px;
-      padding: 10px 16px;
+      padding: 14px 18px;
       text-decoration: none;
-      color: #333;
+      color: var(--dark-color);
       font-size: 16px;
-      flex: 1 1 200px;
-      transition: background 0.3s ease, transform 0.3s ease;
+      transition: var(--transition);
       position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-item::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+      background: var(--primary-color);
+      transform: scaleY(0);
+      transform-origin: bottom;
+      transition: transform 0.3s ease;
+    }
+
+    .nav-item:hover {
+      background: white;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .nav-item:hover::before {
+      transform: scaleY(1);
     }
 
     .nav-left {
       display: flex;
       align-items: center;
+      flex: 1;
     }
 
     .nav-icon {
       font-size: 20px;
-      margin-right: 10px;
-      transition: transform 0.3s ease;
+      margin-right: 12px;
+      width: 24px;
+      text-align: center;
+      color: var(--primary-color);
+      transition: var(--transition);
     }
 
     .nav-item:hover .nav-icon {
       transform: scale(1.2) rotate(8deg);
+      color: var(--accent-color);
+    }
+
+    .nav-name {
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .nav-item:hover .nav-name {
+      color: var(--primary-color);
     }
 
     .fav-icon {
-      color: #ccc;
+      color: rgba(0, 0, 0, 0.2);
       cursor: pointer;
       font-size: 16px;
-      transition: color 0.3s;
+      transition: var(--transition);
+      padding: 8px;
+      margin: -8px;
+    }
+
+    .fav-icon:hover {
+      color: gold;
+      transform: scale(1.2);
     }
 
     .fav-icon.active {
       color: gold;
+      text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
     }
 
     .hidden {
       display: none !important;
     }
+
+    /* 空状态 */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: rgba(0, 0, 0, 0.5);
+    }
+
+    .empty-state i {
+      font-size: 48px;
+      margin-bottom: 20px;
+      color: rgba(0, 0, 0, 0.2);
+    }
+
+    /* 动画 */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .nav-item {
+      animation: fadeIn 0.4s ease forwards;
+      opacity: 0;
+    }
+    .toggle-btn {
+      margin-left: 10px;
+      cursor: pointer;
+      user-select: none;
+      font-size: 18px;
+    }
+    /* 延迟动画 */
+    .nav-item:nth-child(1) { animation-delay: 0.1s; }
+    .nav-item:nth-child(2) { animation-delay: 0.2s; }
+    .nav-item:nth-child(3) { animation-delay: 0.3s; }
+    .nav-item:nth-child(4) { animation-delay: 0.4s; }
+    .nav-item:nth-child(5) { animation-delay: 0.5s; }
+    .nav-item:nth-child(6) { animation-delay: 0.6s; }
+    .nav-item:nth-child(7) { animation-delay: 0.7s; }
+    .nav-item:nth-child(8) { animation-delay: 0.8s; }
+    .nav-item:nth-child(9) { animation-delay: 0.9s; }
+    .nav-item:nth-child(10) { animation-delay: 1.0s; }
+
+    /* 暗色模式 */
+    @media (prefers-color-scheme: dark) {
+      body {
+        color: #f8f9fa;
+      }
+
+      body::before {
+        background: rgba(0, 0, 0, 0.7);
+      }
+
+      .nav-item {
+        background: rgba(30, 30, 30, 0.8);
+        color: #f8f9fa;
+      }
+      .group-card {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        margin: 0 auto 30px auto;
+        padding: 20px 24px;
+        max-width: 1000px;
+        transition: var(--transition);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        margin-left: 0 !important;
+        margin-right: auto !important;
+        padding-left: 24px; /* 可选：微调左侧内边距 */
+        padding-right: 24px;
+      }
+
+      .nav-item {
+        background: rgba(40, 40, 40, 0.8);
+        border-color: rgba(255, 255, 255, 0.05);
+      }
+
+      .search-box input {
+        background-color: rgba(30, 30, 30, 0.8);
+        border-color: rgba(255, 255, 255, 0.1);
+        color: #f8f9fa;
+      }
+
+      .wallpaper-toggle {
+        background-color: rgba(30, 30, 30, 0.9);
+        border-color: rgba(255, 255, 255, 0.1);
+      }
+
+      .wallpaper-toggle summary {
+        color: var(--accent-color);
+      }
+    }
+    #sidenav a:hover {
+      color: var(--primary-color);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      #sidenav {
+        background-color: rgba(30, 30, 30, 0.95);
+      }
+
+      #sidenav a {
+        color: #f8f9fa;
+      }
+
+      #sidenav a:hover {
+        color: var(--accent-color);
+      }
+    }
   </style>
 </head>
 <body>
-<h1 style="text-align: -moz-left;">
-    我的导航页 <i class="fas fa-rocket" style="color: #007bff;"></i>
-</h1>
-<details id="dailyWallpaperToggle" class="wallpaper-toggle">
-  <summary>每日壁纸设置</summary>
-  <div class="wallpaper-controls">
-    <span>选择壁纸：</span>
-    <div id="wallpaperOptions" style="display:inline-block;"></div>
-    <span class="toggle-btn" id="toggleDaily">切换每日模式</span>
-    <input type="file" id="uploadWallpaper" accept="image/*" style="display: none;" />
-    <label for="uploadWallpaper" class="toggle-btn">上传自定义壁纸</label>
+<div class="container">
+  <header class="header">
+    <h1>我的技术导航 <i class="fas fa-rocket icon"></i></h1>
+    <p class="subtitle">快速访问您最喜爱的开发资源</p>
+  </header>
+  <!-- 右侧悬浮目录 -->
+  <div id="sidenav" style="position: fixed; right: 20px; top: 50%; transform: translateY(-50%); background: rgba(255, 255, 255, 0.95); padding: 10px 16px;">
+
   </div>
-</details>
-<div class="search-box">
-  <input type="text" id="searchInput" placeholder="搜索网站名称...">
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="搜索网站名称或关键词...">
+  </div>
+
+  <div id="navRoot"></div>
 </div>
 
-<div id="navRoot"></div>
-
+<details id="dailyWallpaperToggle" class="wallpaper-toggle">
+  <summary><i class="fas fa-image"></i> 壁纸设置</summary>
+  <div class="wallpaper-controls">
+    <div class="wallpaper-options" id="wallpaperOptions"></div>
+    <button class="btn" id="toggleDaily"><i class="fas fa-sync-alt"></i> 每日壁纸</button>
+    <input type="file" id="uploadWallpaper" accept="image/*" style="display: none;" />
+    <label for="uploadWallpaper" class="btn btn-outline"><i class="fas fa-upload"></i> 上传壁纸</label>
+  </div>
+</details>
 <script>
-  // 模拟从 nav.json 读取的结构
+
+  // 导航数据
   const navData = {
     "常用网站": [
       { name: "百度", url: "https://www.baidu.com", icon: "fa-solid fa-magnifying-glass" },
       { name: "Google", url: "https://www.google.com", icon: "fa-brands fa-google" },
       { name: "知乎", url: "https://www.zhihu.com", icon: "fa-solid fa-lightbulb" },
-      { name: "掘金酱", url: "https://e.juejin.cn/#/", icon: "fa-solid fa-tv" },
-      { name: "掘金酱123", url: "https://e.juejin.cn/#/", icon: "fa-solid fa-tv" }
-
+      { name: "掘金", url: "https://juejin.cn", icon: "fa-solid fa-gem" },
+      { name: "CSDN", url: "https://www.csdn.net", icon: "fa-solid fa-code" }
     ],
-    "基础工具": [
+    "开发工具": [
       { name: "GitHub", url: "https://github.com", icon: "fa-brands fa-github" },
+      { name: "GitLab", url: "https://gitlab.com", icon: "fa-brands fa-gitlab" },
       { name: "Stack Overflow", url: "https://stackoverflow.com", icon: "fa-brands fa-stack-overflow" },
+      { name: "CodePen", url: "https://codepen.io", icon: "fa-brands fa-codepen" }
+    ],
+    "学习资源": [
+      { name: "MDN Web Docs", url: "https://developer.mozilla.org", icon: "fa-brands fa-firefox" },
       { name: "W3School", url: "https://www.w3school.com.cn", icon: "fa-solid fa-book" },
-      { name: "马丁学编程", url: "https://nageoffer.com/", icon: "fa-solid fa-code" }
+      { name: "菜鸟教程", url: "https://www.runoob.com", icon: "fa-solid fa-graduation-cap" },
+      { name: "LeetCode", url: "https://leetcode.cn", icon: "fa-solid fa-laptop-code" }
+    ],
+    "设计资源": [
+      { name: "Dribbble", url: "https://dribbble.com", icon: "fa-brands fa-dribbble" },
+      { name: "Behance", url: "https://www.behance.net", icon: "fa-brands fa-behance" },
+      { name: "Figma", url: "https://www.figma.com", icon: "fa-brands fa-figma" },
+      { name: "Unsplash", url: "https://unsplash.com", icon: "fa-solid fa-camera" }
     ]
   };
 
+  // DOM元素
   const navRoot = document.getElementById("navRoot");
   const searchInput = document.getElementById("searchInput");
   const allNavItems = [];
 
   // 从 localStorage 获取收藏夹
   const favoriteUrls = new Set(JSON.parse(localStorage.getItem("favorites") || "[]"));
+  function renderSideNav() {
+    const sidenav = document.getElementById("sidenav");
+    sidenav.innerHTML = ""; // 清空旧内容
 
-  // 添加收藏夹分组
+    for (const [group] of Object.entries(navData)) {
+      const link = document.createElement("a");
+      link.href = `#${group}`;
+      link.textContent = group;
+      link.style.display = "block";
+      link.style.color = "var(--dark-color)";
+      link.style.fontWeight = "500";
+      link.style.fontSize = "14px";
+      link.style.textDecoration = "none";
+      link.style.cursor = "pointer";
+
+      // 平滑滚动到对应锚点
+      link.addEventListener("click", function (e) {
+        e.preventDefault();
+        const target = document.querySelector(`[data-group="${group}"]`);
+        if (target) {
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      });
+
+      sidenav.appendChild(link);
+    }
+  }
+  // 渲染收藏夹
   function renderFavorites() {
     const favorites = [];
     for (const [group, items] of Object.entries(navData)) {
@@ -244,88 +635,175 @@
         }
       }
     }
+
     if (favorites.length > 0) {
-      renderGroup("⭐ 收藏夹", favorites, true);
+      renderGroup("⭐ 我的收藏", favorites, true);
     }
   }
 
   // 渲染单个分组
   function renderGroup(title, links, isFavorites = false) {
+    const groupContainer = document.createElement("details");
+    groupContainer.open = true;
+    groupContainer.setAttribute("data-group", title);
+
+    const summary = document.createElement("summary");
+    summary.className = "group-title";
+    summary.style.display = "flex";
+    summary.style.justifyContent = "space-between";
+    summary.style.alignItems = "center";
+
+    const toggleBtn = document.createElement("span");
+    toggleBtn.className = "toggle-btn";
+    toggleBtn.textContent = groupContainer.open ? "▼" : "▶"; // 可选：初始图标
+    toggleBtn.style.marginLeft = "10px";
+    toggleBtn.style.cursor = "pointer";
+    toggleBtn.style.userSelect = "none";
+    toggleBtn.style.fontSize = "18px";
+
+    // 根据分组名获取图标
+    const groupIcon = getGroupIcon(title);
+    // summary.innerHTML = `<i class="${groupIcon}"></i>${title}`;
+    summary.innerHTML = `${title}`;
+    summary.appendChild(toggleBtn);
+    summary.style.justifyContent = "flex-start"; // 关键：让内容靠左排列
+
+    // 监听点击事件切换 open 状态
+    toggleBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      groupContainer.open = !groupContainer.open;
+      toggleBtn.textContent = groupContainer.open ? "▼" : "▶";
+    });
+
     const groupCard = document.createElement("div");
     groupCard.className = "group-card";
-
-    const titleEl = document.createElement("div");
-    titleEl.className = "group-title";
-    titleEl.textContent = title;
+    groupCard.setAttribute("data-group", title); // 添加锚点属性
 
     const navList = document.createElement("div");
     navList.className = "nav-list";
 
-    links.forEach(link => {
-      const a = document.createElement("a");
-      a.className = "nav-item";
-      a.href = link.url;
-      a.target = "_blank";
+    links.forEach((link, index) => {
+      const navItem = document.createElement("a");
+      navItem.className = "nav-item";
+      navItem.href = link.url;
+      navItem.target = "_blank";
+      navItem.rel = "noopener noreferrer";
+      navItem.style.animationDelay = `${index * 0.1}s`;
 
-      const left = document.createElement("div");
-      left.className = "nav-left";
-      left.innerHTML = `
-          <i class="nav-icon ${link.icon}"></i>
-          <div class="nav-name">${link.name}</div>
-        `;
+      navItem.innerHTML = `      <div class="nav-left">
+        <i class="nav-icon ${link.icon}"></i>
+        <div class="nav-name">${link.name}</div>
+      </div>
+      <i class="fa-star fav-icon ${favoriteUrls.has(link.url) ? 'active fas' : 'far'}"></i>
+    `;
 
-      const fav = document.createElement("i");
-      fav.className = "fa-star fav-icon fas";
-      if (favoriteUrls.has(link.url)) {
-        fav.classList.add("active");
-      }
-
-      fav.addEventListener("click", e => {
+      const favIcon = navItem.querySelector(".fav-icon");
+      favIcon.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
+
         if (favoriteUrls.has(link.url)) {
           favoriteUrls.delete(link.url);
-          fav.classList.remove("active");
+          favIcon.classList.remove("active", "fas");
+          favIcon.classList.add("far");
         } else {
           favoriteUrls.add(link.url);
-          fav.classList.add("active");
+          favIcon.classList.add("active", "fas");
+          favIcon.classList.remove("far");
         }
+
         localStorage.setItem("favorites", JSON.stringify([...favoriteUrls]));
-        // 重新渲染收藏夹
         renderAll();
+
       });
 
-      a.appendChild(left);
-      a.appendChild(fav);
-      navList.appendChild(a);
+      navList.appendChild(navItem);
+
       if (!isFavorites) {
-        allNavItems.push({ element: a, name: link.name.toLowerCase() });
+        allNavItems.push({ element: navItem, name: link.name.toLowerCase() });
       }
     });
 
-    groupCard.appendChild(titleEl);
     groupCard.appendChild(navList);
-    navRoot.appendChild(groupCard);
+    groupContainer.appendChild(summary);
+    groupContainer.appendChild(groupCard);
+
+    navRoot.appendChild(groupContainer);
   }
 
-  // 渲染所有分组（含收藏夹）
-  function renderAll() {
-    navRoot.innerHTML = "";
-    renderFavorites();
-    for (const [group, links] of Object.entries(navData)) {
-      renderGroup(group, links);
+  // 获取分组图标
+  function getGroupIcon(title) {
+    switch(title) {
+      case "常用网站": return "fas fa-globe";
+      case "开发工具": return "fas fa-tools";
+      case "学习资源": return "fas fa-graduation-cap";
+      case "设计资源": return "fas fa-palette";
+      default: return "fas fa-folder";
     }
   }
 
+  // 渲染所有分组
+  function renderAll() {
+    navRoot.innerHTML = "";
+    renderFavorites();
+
+    for (const [group, links] of Object.entries(navData)) {
+      renderGroup(group, links);
+    }
+    renderSideNav();
+  }
+
+  // 初始化渲染
   renderAll();
 
-  // 搜索过滤
-  searchInput.addEventListener("input", function () {
+  // 搜索功能
+  searchInput.addEventListener("input", debounce(function() {
     const keyword = this.value.trim().toLowerCase();
-    allNavItems.forEach(({ element, name }) => {
-      element.classList.toggle("hidden", !name.includes(keyword));
-    });
-  });
+
+    if (keyword === "") {
+      renderAll();
+      return;
+    }
+
+    // 创建搜索结果容器
+    navRoot.innerHTML = "";
+    const searchResults = [];
+
+    // 搜索所有导航项
+    for (const [group, items] of Object.entries(navData)) {
+      for (const item of items) {
+        if (item.name.toLowerCase().includes(keyword) ||
+                group.toLowerCase().includes(keyword)) {
+          searchResults.push(item);
+        }
+      }
+    }
+
+    if (searchResults.length > 0) {
+      renderGroup("🔍 搜索结果", searchResults);
+    } else {
+      // 无结果提示
+      const noResults = document.createElement("div");
+      noResults.className = "empty-state";
+      noResults.innerHTML = `
+        <i class="fas fa-search"></i>
+        <h3>没有找到匹配的结果</h3>
+        <p>尝试使用不同的关键词搜索</p>
+      `;
+      navRoot.appendChild(noResults);
+    }
+  }, 300));
+
+  // 防抖函数
+  function debounce(func, delay) {
+    let timeout;
+    return function() {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, arguments), delay);
+    };
+  }
 
   // 壁纸功能
   const wallpapers = [
@@ -333,7 +811,10 @@
     "https://picsum.photos/1920/1080/?city",
     "https://picsum.photos/1920/1080/?space",
     "https://picsum.photos/1920/1080/?coding",
-    "https://picsum.photos/1920/1080/?landscape"
+    "https://picsum.photos/1920/1080/?landscape",
+    "https://picsum.photos/1920/1080/?water",
+    "https://picsum.photos/1920/1080/?forest",
+    "https://picsum.photos/1920/1080/?night"
   ];
 
   const wallpaperKey = "custom_wallpaper";
@@ -341,32 +822,45 @@
 
   const wallpaperContainer = document.getElementById("wallpaperOptions");
   const toggleBtn = document.getElementById("toggleDaily");
+  const uploadInput = document.getElementById("uploadWallpaper");
 
+  // 应用壁纸
   function applyWallpaper() {
     const dailyMode = localStorage.getItem(dailyModeKey) !== "false";
+
     if (dailyMode) {
-      document.body.style.backgroundImage = `url('https://source.unsplash.com/1920x1080/?nature')`;
-      toggleBtn.textContent = "每日一图：开";
+      // 每日壁纸模式
+      const date = new Date();
+      const dayOfYear = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+      const dailyWallpaper = `https://picsum.photos/seed/${dayOfYear}/1920/1080`;
+
+      document.body.style.backgroundImage = `url('${dailyWallpaper}')`;
+      toggleBtn.innerHTML = `<i class="fas fa-sync-alt"></i> 每日壁纸: 开`;
     } else {
+      // 自定义壁纸模式
       let custom = localStorage.getItem(wallpaperKey);
+
       if (!custom) {
         // 首次访问，随机选一张壁纸
         custom = wallpapers[Math.floor(Math.random() * wallpapers.length)];
         localStorage.setItem(wallpaperKey, custom);
       }
+
       document.body.style.backgroundImage = `url('${custom}')`;
-      toggleBtn.textContent = "每日一图：关";
+      toggleBtn.innerHTML = `<i class="fas fa-sync-alt"></i> 每日壁纸: 关`;
     }
   }
 
+  // 渲染壁纸选项
   function renderWallpaperOptions() {
     wallpaperContainer.innerHTML = "";
+
     wallpapers.forEach((url, idx) => {
       const div = document.createElement("div");
       div.className = "wallpaper-option";
       div.style.backgroundImage = `url('${url}')`;
       div.style.backgroundSize = "cover";
-      div.title = `壁纸${idx + 1}`;
+      div.title = `壁纸 ${idx + 1}`;
 
       if (localStorage.getItem(wallpaperKey) === url) {
         div.classList.add("selected");
@@ -383,22 +877,45 @@
     });
   }
 
+  // 切换每日壁纸模式
   toggleBtn.onclick = () => {
     const current = localStorage.getItem(dailyModeKey) !== "false";
     localStorage.setItem(dailyModeKey, String(!current));
     applyWallpaper();
+    renderWallpaperOptions();
   };
+
+  // 上传自定义壁纸
+  uploadInput.addEventListener("change", function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      const imageUrl = event.target.result;
+      localStorage.setItem(wallpaperKey, imageUrl);
+      localStorage.setItem(dailyModeKey, "false");
+      applyWallpaper();
+      renderWallpaperOptions();
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // 初始化壁纸功能
+  if (!localStorage.getItem(dailyModeKey)) {
+    localStorage.setItem(dailyModeKey, "true");
+  }
 
   renderWallpaperOptions();
   applyWallpaper();
-  document.getElementById("dailyWallpaperToggle").addEventListener("toggle", function () {
-    if (!this.open) {
-      // 折叠时可执行的操作（如释放资源）
-    } else {
-      // 展开时可执行的操作（如刷新壁纸列表）
+
+  // 壁纸设置面板切换事件
+  document.getElementById("dailyWallpaperToggle").addEventListener("toggle", function() {
+    if (this.open) {
       renderWallpaperOptions();
     }
   });
+
 </script>
 
 </body>
