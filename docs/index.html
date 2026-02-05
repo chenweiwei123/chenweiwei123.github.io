@@ -197,13 +197,25 @@
                                 基金数据列表
                             </h2>
                             <div class="flex items-center space-x-2">
-                                <button id="sortBtn" class="bg-gray-100 text-gray-700 px-3 py-1 rounded-lg hover:bg-gray-200 transition-all flex items-center text-sm">
-                                    <i class="fa fa-sort mr-1"></i>
-                                    排序
-                                </button>
-                                <button id="filterBtn" class="bg-gray-100 text-gray-700 px-3 py-1 rounded-lg hover:bg-gray-200 transition-all flex items-center text-sm">
-                                    <i class="fa fa-filter mr-1"></i>
-                                    筛选
+                                <div class="flex items-center space-x-2">
+                                    <select id="filterFundName" class="bg-gray-100 text-gray-700 px-2 py-1 rounded-lg text-sm focus:outline-none">
+                                        <option value="">基金名称</option>
+                                    </select>
+                                    <select id="filterFundType" class="bg-gray-100 text-gray-700 px-2 py-1 rounded-lg text-sm focus:outline-none">
+                                        <option value="">基金类型</option>
+                                        <option value="股票型">股票型</option>
+                                        <option value="债券型">债券型</option>
+                                        <option value="混合型">混合型</option>
+                                        <option value="指数型">指数型</option>
+                                        <option value="ETF">ETF</option>
+                                        <option value="QDII">QDII</option>
+                                        <option value="货币型">货币型</option>
+                                        <option value="理财型">理财型</option>
+                                    </select>
+                                </div>
+                                <button id="resetFilterBtn" class="bg-gray-100 text-gray-700 px-3 py-1 rounded-lg hover:bg-gray-200 transition-all flex items-center text-sm">
+                                    <i class="fa fa-refresh mr-1"></i>
+                                    重置
                                 </button>
                                 <select id="rowsPerPage" class="bg-gray-100 text-gray-700 px-2 py-1 rounded-lg text-sm focus:outline-none">
                                     <option value="10">10条/页</option>
@@ -344,42 +356,46 @@
             </button>
         </div>
         <div class="p-6">
-            <form id="addFundForm" class="space-y-4">
+            <div id="fundSearchStep" class="space-y-4">
                 <div>
-                    <label for="fundId" class="block text-sm font-medium text-gray-700 mb-1">基金ID</label>
-                    <input type="text" id="fundId" name="fundId" required="" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <label for="searchFundId" class="block text-sm font-medium text-gray-700 mb-1">基金ID</label>
+                    <div class="flex space-x-2">
+                        <input type="text" id="searchFundId" placeholder="请输入基金ID"
+                               class="flex-grow px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <button id="searchFundBtn" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all flex items-center">
+                            <i class="fa fa-search mr-2"></i>
+                            查询
+                        </button>
+                    </div>
                 </div>
-                <div>
-                    <label for="fundName" class="block text-sm font-medium text-gray-700 mb-1">基金名称</label>
-                    <input type="text" id="fundName" name="fundName" required="" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                <div id="searchResult" class="hidden">
+                    <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <h4 class="font-medium text-gray-800 mb-2">查询结果</h4>
+                        <div id="fundInfo" class="space-y-2 text-sm"></div>
+                        <div class="mt-4 flex justify-end">
+                            <button id="confirmAddFund" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all flex items-center">
+                                <i class="fa fa-plus mr-2"></i>
+                                添加此基金
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label for="fundType" class="block text-sm font-medium text-gray-700 mb-1">基金类型</label>
-                    <select id="fundType" name="fundType" required="" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
-                        <option value="">请选择类型</option>
-                        <option value="股票型">股票型</option>
-                        <option value="债券型">债券型</option>
-                        <option value="混合型">混合型</option>
-                        <option value="指数型">指数型</option>
-                        <option value="ETF">ETF</option>
-                        <option value="QDII">QDII</option>
-                        <option value="货币型">货币型</option>
-                        <option value="理财型">理财型</option>
-                    </select>
+                <div id="searchLoading" class="hidden">
+                    <div class="flex items-center justify-center py-4">
+                        <i class="fa fa-spinner fa-spin mr-2"></i>
+                        <span>正在查询基金信息...</span>
+                    </div>
                 </div>
-                <div>
-                    <label for="fundNav" class="block text-sm font-medium text-gray-700 mb-1">基金净值</label>
-                    <input type="number" id="fundNav" name="fundNav" step="0.0001" required="" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                <div id="searchError" class="hidden">
+                    <div class="p-4 bg-red-50 rounded-lg border border-red-200 text-red-700">
+                        <p id="errorMessage"></p>
+                    </div>
                 </div>
-            </form>
+            </div>
         </div>
-        <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
+        <div class="p-6 border-t border-gray-200 flex justify-end">
             <button id="cancelAddFund" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-all">
                 取消
-            </button>
-            <button id="submitAddFund" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all flex items-center">
-                <i class="fa fa-save mr-2"></i>
-                保存基金数据
             </button>
         </div>
     </div>
@@ -390,28 +406,34 @@
     // 全局变量
     let fundData = [];
     let filteredData = [];
+    let currentPageData = [];
     let currentPage = 1;
     let rowsPerPage = 10;
     let sortColumn = null;
     let sortDirection = 'asc';
     let typeChart = null;
+    let isLoading = false;
 
-    // 基金类型列表
-    const fundTypes = ['股票型', '债券型', '混合型', '指数型', 'ETF', 'QDII', '货币型', '理财型'];
+    // 基金类型映射
+    const fundTypeMap = {
+        'ETF': 'ETF',
+        '联接': '指数型',
+        '股票': '股票型',
+        '债券': '债券型',
+        '混合': '混合型',
+        '指数': '指数型',
+        'QDII': 'QDII',
+        '货币': '货币型',
+        '理财': '理财型'
+    };
+
+    // 默认基金ID列表
+    const defaultFundIds = ['022364', '011369', '161725', '004253'];
 
     // 初始化页面
     document.addEventListener('DOMContentLoaded', function() {
         // 生成默认基金数据
         generateDefaultFunds();
-
-        // 初始化表格
-        updateTable();
-
-        // 初始化图表
-        initTypeChart();
-
-        // 更新统计数据
-        updateStatistics();
 
         // 设置事件监听器
         setupEventListeners();
@@ -420,23 +442,128 @@
         startRealTimeUpdates();
     });
 
-    // 生成默认基金数据
-    function generateDefaultFunds() {
-        const defaultFunds = [
-            { id: '000001', name: '华夏成长混合', type: '混合型', nav: 1.2345, dailyChange: 1.25, weeklyChange: 2.34, monthlyChange: 4.56, yearlyChange: 15.67, threeYearChange: 45.32 },
-            { id: '000002', name: '华夏债券A', type: '债券型', nav: 1.0567, dailyChange: 0.12, weeklyChange: 0.34, monthlyChange: 1.23, yearlyChange: 3.45, threeYearChange: 10.23 },
-            { id: '000003', name: '华夏股票A', type: '股票型', nav: 2.3456, dailyChange: -0.56, weeklyChange: 1.23, monthlyChange: 3.45, yearlyChange: 12.34, threeYearChange: 35.67 },
-            { id: '000004', name: '华夏指数A', type: '指数型', nav: 1.8765, dailyChange: 0.78, weeklyChange: 1.56, monthlyChange: 5.67, yearlyChange: 18.76, threeYearChange: 52.34 },
-            { id: '000005', name: '华夏ETF', type: 'ETF', nav: 3.4567, dailyChange: 1.45, weeklyChange: 2.67, monthlyChange: 6.78, yearlyChange: 22.34, threeYearChange: 67.89 },
-            { id: '000006', name: '华夏QDII', type: 'QDII', nav: 1.5678, dailyChange: -0.23, weeklyChange: 0.78, monthlyChange: 2.34, yearlyChange: 8.76, threeYearChange: 24.56 },
-            { id: '000007', name: '华夏货币A', type: '货币型', nav: 1.0001, dailyChange: 0.01, weeklyChange: 0.05, monthlyChange: 0.23, yearlyChange: 1.45, threeYearChange: 4.56 },
-            { id: '000008', name: '华夏理财A', type: '理财型', nav: 1.1234, dailyChange: 0.08, weeklyChange: 0.45, monthlyChange: 1.78, yearlyChange: 5.67, threeYearChange: 15.43 },
-            { id: '000009', name: '嘉实成长混合', type: '混合型', nav: 1.6789, dailyChange: 0.98, weeklyChange: 1.87, monthlyChange: 4.32, yearlyChange: 16.78, threeYearChange: 48.76 },
-            { id: '000010', name: '嘉实债券A', type: '债券型', nav: 1.0876, dailyChange: 0.15, weeklyChange: 0.45, monthlyChange: 1.56, yearlyChange: 4.32, threeYearChange: 12.67 }
-        ];
+    // 从API获取基金数据
+    function fetchFundData(fundId) {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            const url = `http://fundgz.1234567.com.cn/js/${fundId}.js?rt=${Date.now()}`;
 
-        fundData = defaultFunds;
-        filteredData = [...fundData];
+            xhr.open('GET', url, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        try {
+                            // 使用正则表达式提取JSON数据
+                            const responseText = xhr.responseText;
+                            const jsonMatch = responseText.match(/jsonpgz<inline_LaTeX_Formula>(.*?)<\inline_LaTeX_Formula>;/);
+
+                            if (jsonMatch && jsonMatch[1]) {
+                                const jsonData = JSON.parse(jsonMatch[1]);
+                                resolve(jsonData);
+                            } else {
+                                throw new Error('无法解析返回数据');
+                            }
+                        } catch (error) {
+                            reject(new Error(`解析基金${fundId}数据失败: ${error.message}`));
+                        }
+                    } else {
+                        reject(new Error(`获取基金${fundId}数据失败: HTTP ${xhr.status}`));
+                    }
+                }
+            };
+
+            xhr.onerror = function() {
+                reject(new Error(`获取基金${fundId}数据失败: 网络错误`));
+            };
+
+            xhr.send();
+        });
+    }
+
+    // 解析基金类型
+    function parseFundType(fundName) {
+        for (const [keyword, type] of Object.entries(fundTypeMap)) {
+            if (fundName.includes(keyword)) {
+                return type;
+            }
+        }
+        return '混合型'; // 默认类型
+    }
+
+    // 生成默认基金数据
+    async function generateDefaultFunds() {
+        isLoading = true;
+        fundData = [];
+
+        try {
+            // 显示加载状态
+            const tableBody = document.getElementById('fundTableBody');
+            tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="10" class="px-6 py-4 text-center text-gray-500">
+                            <i class="fa fa-spinner fa-spin mr-2"></i>正在加载基金数据...
+                        </td>
+                    </tr>
+                `;
+
+            // 循环获取所有默认基金数据
+            for (const fundId of defaultFundIds) {
+                try {
+                    const data = await fetchFundData(fundId);
+
+                    // 计算其他涨跌幅数据（这里使用随机值模拟）
+                    const dailyChange = parseFloat(data.gszzl);
+                    const weeklyChange = parseFloat((dailyChange + (Math.random() * 2 - 1)).toFixed(2));
+                    const monthlyChange = parseFloat((dailyChange * 3 + (Math.random() * 5 - 2.5)).toFixed(2));
+                    const yearlyChange = parseFloat((Math.random() * 30 + 5).toFixed(2));
+                    const threeYearChange = parseFloat((Math.random() * 100 + 20).toFixed(2));
+
+                    // 创建基金对象
+                    const fund = {
+                        id: data.fundcode,
+                        name: data.name,
+                        type: parseFundType(data.name),
+                        nav: parseFloat(data.dwjz),
+                        dailyChange: dailyChange,
+                        weeklyChange: weeklyChange,
+                        monthlyChange: monthlyChange,
+                        yearlyChange: yearlyChange,
+                        threeYearChange: threeYearChange,
+                        updateTime: data.gztime,
+                        date: data.jzrq
+                    };
+
+                    fundData.push(fund);
+                } catch (error) {
+                    console.error(`获取基金${fundId}数据失败:`, error);
+                }
+            }
+
+            // 初始化过滤数据
+            filteredData = [...fundData];
+            currentPageData = [...fundData];
+
+            // 更新页面显示
+            updateTable();
+            updateFilterOptions();
+            updateStatistics();
+            initTypeChart();
+
+            isLoading = false;
+        } catch (error) {
+            console.error('加载基金数据失败:', error);
+            isLoading = false;
+
+            // 显示错误信息
+            const tableBody = document.getElementById('fundTableBody');
+            tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="10" class="px-6 py-4 text-center text-red-500">
+                            <i class="fa fa-exclamation-circle mr-2"></i>加载基金数据失败，请稍后重试
+                        </td>
+                    </tr>
+                `;
+        }
     }
 
     // 初始化基金类型分布图表
@@ -541,15 +668,21 @@
             document.getElementById('addFundModal').classList.add('hidden');
         });
 
-        // 保存按钮点击事件
-        document.getElementById('submitAddFund').addEventListener('click', function() {
-            addFund();
+        // 查询基金按钮点击事件
+        document.getElementById('searchFundBtn').addEventListener('click', function() {
+            searchFund();
         });
 
-        // 表单提交事件（用于支持回车键提交）
-        document.getElementById('addFundForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            addFund();
+        // 确认添加基金按钮点击事件
+        document.getElementById('confirmAddFund').addEventListener('click', function() {
+            addFundFromSearch();
+        });
+
+        // 基金ID输入框回车事件
+        document.getElementById('searchFundId').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchFund();
+            }
         });
 
         // 搜索框输入事件
@@ -567,6 +700,23 @@
             rowsPerPage = parseInt(this.value);
             currentPage = 1;
             updateTable();
+        });
+
+        // 基金名称筛选事件
+        document.getElementById('filterFundName').addEventListener('change', function() {
+            applyFilters();
+        });
+
+        // 基金类型筛选事件
+        document.getElementById('filterFundType').addEventListener('change', function() {
+            applyFilters();
+        });
+
+        // 重置筛选按钮点击事件
+        document.getElementById('resetFilterBtn').addEventListener('click', function() {
+            document.getElementById('filterFundName').value = '';
+            document.getElementById('filterFundType').value = '';
+            applyFilters();
         });
 
 
@@ -599,47 +749,112 @@
 
     }
 
-    // 添加新基金
-    function addFund() {
-        const formData = new FormData(document.getElementById('addFundForm'));
+    // 全局变量：当前查询到的基金信息
+    let currentSearchedFund = null;
 
-        // 检查基金ID是否已存在
-        const fundId = formData.get('fundId');
-        if (fundData.some(fund => fund.id === fundId)) {
-            alert('基金ID已存在，请使用其他ID');
+    // 查询基金
+    function searchFund() {
+        const fundId = document.getElementById('searchFundId').value.trim();
+
+        if (!fundId) {
+            showSearchError('请输入基金ID');
             return;
         }
 
-        // 创建新基金对象
-        const newFund = {
-            id: fundId,
-            name: formData.get('fundName'),
-            type: formData.get('fundType'),
-            nav: parseFloat(formData.get('fundNav')),
-            dailyChange: (Math.random() * 4 - 2).toFixed(2),
-            weeklyChange: (Math.random() * 8 - 3).toFixed(2),
-            monthlyChange: (Math.random() * 15 - 5).toFixed(2),
-            yearlyChange: (Math.random() * 40 - 10).toFixed(2),
-            threeYearChange: (Math.random() * 100 + 20).toFixed(2)
-        };
+        // 显示加载状态
+        document.getElementById('searchLoading').classList.remove('hidden');
+        document.getElementById('searchResult').classList.add('hidden');
+        document.getElementById('searchError').classList.add('hidden');
+
+        // 模拟API请求延迟
+        setTimeout(() => {
+            // 模拟基金数据（实际应用中应该从API获取）
+            const mockFundData = {
+                id: fundId,
+                name: `${fundId}基金名称`,
+                type: fundTypes[Math.floor(Math.random() * fundTypes.length)],
+                nav: (Math.random() * 3 + 0.5).toFixed(4),
+                manager: '基金经理',
+                establishDate: '2020-01-01',
+                scale: `${(Math.random() * 10 + 1).toFixed(2)}亿`
+            };
+
+            // 隐藏加载状态
+            document.getElementById('searchLoading').classList.add('hidden');
+
+            // 显示查询结果
+            const fundInfoDiv = document.getElementById('fundInfo');
+            fundInfoDiv.innerHTML = `
+                    <p><strong>基金ID:</strong> ${mockFundData.id}</p>
+                    <p><strong>基金名称:</strong> ${mockFundData.name}</p>
+                    <p><strong>基金类型:</strong> ${mockFundData.type}</p>
+                    <p><strong>基金净值:</strong> ${mockFundData.nav}</p>
+                    <p><strong>基金经理:</strong> ${mockFundData.manager}</p>
+                    <p><strong>成立日期:</strong> ${mockFundData.establishDate}</p>
+                    <p><strong>基金规模:</strong> ${mockFundData.scale}</p>
+                `;
+
+            // 保存当前查询到的基金信息
+            currentSearchedFund = {
+                id: mockFundData.id,
+                name: mockFundData.name,
+                type: mockFundData.type,
+                nav: parseFloat(mockFundData.nav),
+                dailyChange: (Math.random() * 4 - 2).toFixed(2),
+                weeklyChange: (Math.random() * 8 - 3).toFixed(2),
+                monthlyChange: (Math.random() * 15 - 5).toFixed(2),
+                yearlyChange: (Math.random() * 40 - 10).toFixed(2),
+                threeYearChange: (Math.random() * 100 + 20).toFixed(2)
+            };
+
+            document.getElementById('searchResult').classList.remove('hidden');
+        }, 1000);
+    }
+
+    // 显示搜索错误
+    function showSearchError(message) {
+        document.getElementById('searchError').classList.remove('hidden');
+        document.getElementById('errorMessage').textContent = message;
+        document.getElementById('searchResult').classList.add('hidden');
+        document.getElementById('searchLoading').classList.add('hidden');
+    }
+
+    // 从查询结果添加基金
+    function addFundFromSearch() {
+        if (!currentSearchedFund) return;
+
+        // 检查基金ID是否已存在
+        if (fundData.some(fund => fund.id === currentSearchedFund.id)) {
+            showToast('基金ID已存在，请使用其他ID', 'error');
+            return;
+        }
 
         // 添加到数据中
-        fundData.push(newFund);
+        fundData.push(currentSearchedFund);
         filteredData = [...fundData];
 
         // 更新表格和统计数据
         updateTable();
         updateStatistics();
         updateTypeChart();
-
-        // 重置表单
-        document.getElementById('addFundForm').reset();
+        updateFilterOptions();
 
         // 关闭模态框
         document.getElementById('addFundModal').classList.add('hidden');
 
+        // 重置搜索状态
+        document.getElementById('searchFundId').value = '';
+        document.getElementById('searchResult').classList.add('hidden');
+        currentSearchedFund = null;
+
         // 显示成功消息
-        showToast(`成功添加基金: ${newFund.name}`);
+        showToast(`成功添加基金: ${currentSearchedFund.name}`);
+    }
+
+    // 添加新基金（保留原有功能，用于兼容）
+    function addFund() {
+        // 此函数保留以兼容旧代码，实际功能已移至addFundFromSearch
+        console.warn('addFund() 已被弃用，请使用 addFundFromSearch()');
     }
 
     // 过滤基金数据
@@ -655,11 +870,52 @@
             );
         }
 
+        // 应用其他筛选条件
+        applyFilters();
+    }
+
+    // 应用筛选条件
+    function applyFilters() {
+        const nameFilter = document.getElementById('filterFundName').value;
+        const typeFilter = document.getElementById('filterFundType').value;
+
+        let result = [...filteredData];
+
+        // 应用基金名称筛选
+        if (nameFilter) {
+            result = result.filter(fund => fund.name === nameFilter);
+        }
+
+        // 应用基金类型筛选
+        if (typeFilter) {
+            result = result.filter(fund => fund.type === typeFilter);
+        }
+
+        // 更新当前页数据
+        currentPageData = result;
         currentPage = 1;
         updateTable();
     }
 
-    // 排序表格
+    // 更新筛选选项
+    function updateFilterOptions() {
+        // 更新基金名称筛选选项
+        const nameFilter = document.getElementById('filterFundName');
+        const fundNames = [...new Set(fundData.map(fund => fund.name))];
+
+        // 清空现有选项
+        nameFilter.innerHTML = '<option value="">基金名称</option>';
+
+        // 添加新选项
+        fundNames.forEach(name => {
+            const option = document.createElement('option');
+            option.value = name;
+            option.textContent = name;
+            nameFilter.appendChild(option);
+        });
+    }
+
+    // 排序表格（只对当前页数据排序）
     function sortTable(column) {
         // 如果点击的是当前排序列，则切换排序方向
         if (sortColumn === column) {
@@ -679,8 +935,12 @@
             ? 'fa fa-sort-asc ml-1 text-primary'
             : 'fa fa-sort-desc ml-1 text-primary';
 
-        // 排序数据
-        filteredData.sort((a, b) => {
+        // 排序当前页数据
+        const startIndex = (currentPage - 1) * rowsPerPage;
+        const endIndex = Math.min(startIndex + rowsPerPage, currentPageData.length);
+        const pageData = currentPageData.slice(startIndex, endIndex);
+
+        pageData.sort((a, b) => {
             let aVal = a[column];
             let bVal = b[column];
 
@@ -701,6 +961,11 @@
             return 0;
         });
 
+        // 更新当前页数据
+        for (let i = 0; i < pageData.length; i++) {
+            currentPageData[startIndex + i] = pageData[i];
+        }
+
         updateTable();
     }
 
@@ -711,17 +976,17 @@
 
         // 计算分页
         const startIndex = (currentPage - 1) * rowsPerPage;
-        const endIndex = Math.min(startIndex + rowsPerPage, filteredData.length);
-        const pageData = filteredData.slice(startIndex, endIndex);
+        const endIndex = Math.min(startIndex + rowsPerPage, currentPageData.length);
+        const pageData = currentPageData.slice(startIndex, endIndex);
 
         // 更新分页信息
-        document.getElementById('startRange').textContent = filteredData.length > 0 ? startIndex + 1 : 0;
+        document.getElementById('startRange').textContent = currentPageData.length > 0 ? startIndex + 1 : 0;
         document.getElementById('endRange').textContent = endIndex;
-        document.getElementById('totalItems').textContent = filteredData.length;
+        document.getElementById('totalItems').textContent = currentPageData.length;
 
         // 更新分页按钮状态
         document.getElementById('prevPage').disabled = currentPage === 1;
-        document.getElementById('nextPage').disabled = endIndex >= filteredData.length;
+        document.getElementById('nextPage').disabled = endIndex >= currentPageData.length;
 
         // 生成表格行
         if (pageData.length === 0) {
@@ -794,13 +1059,13 @@
         document.getElementById('avgThreeYearChange').textContent = `${avgThreeYearChange.toFixed(2)}%`;
 
         // 更新趋势
-        document.getElementById('avgDailyChangeTrend').textContent = getTrendText(avgDailyChange);
+        document.getElementById('avgDailyChangeTrend').innerHTML = getTrendText(avgDailyChange);
         document.getElementById('avgDailyChangeTrend').className = getTrendClass(avgDailyChange);
 
-        document.getElementById('avgMonthlyChangeTrend').textContent = getTrendText(avgMonthlyChange);
+        document.getElementById('avgMonthlyChangeTrend').innerHTML = getTrendText(avgMonthlyChange);
         document.getElementById('avgMonthlyChangeTrend').className = getTrendClass(avgMonthlyChange);
 
-        document.getElementById('avgThreeYearChangeTrend').textContent = getTrendText(avgThreeYearChange);
+        document.getElementById('avgThreeYearChangeTrend').innerHTML = getTrendText(avgThreeYearChange);
         document.getElementById('avgThreeYearChangeTrend').className = getTrendClass(avgThreeYearChange);
     }
 
@@ -845,7 +1110,12 @@
 
     // 查看基金详情
     function viewFundDetail(fundId) {
-        const fund = fundData.find(f => f.id === fundId);
+        // 先从当前页数据中查找
+        let fund = currentPageData.find(f => f.id === fundId);
+        // 如果没找到，从原始数据中查找
+        if (!fund) {
+            fund = fundData.find(f => f.id === fundId);
+        }
         if (!fund) return;
 
         alert(`基金详情:\nID: ${fund.id}\n名称: ${fund.name}\n类型: ${fund.type}\n净值: ${fund.nav}\n当日涨幅: ${fund.dailyChange}%\n本周涨幅: ${fund.weeklyChange}%\n当月涨幅: ${fund.monthlyChange}%\n今年涨幅: ${fund.yearlyChange}%\n近三年涨幅: ${fund.threeYearChange}%`);
@@ -854,13 +1124,23 @@
     // 删除基金
     function deleteFund(fundId) {
         if (confirm('确定要删除此基金吗？')) {
+            // 从原始数据中删除
             const index = fundData.findIndex(f => f.id === fundId);
             if (index !== -1) {
                 const fundName = fundData[index].name;
                 fundData.splice(index, 1);
 
-                // 更新过滤后的数据
-                filterFunds();
+                // 从当前页数据中删除
+                const currentIndex = currentPageData.findIndex(f => f.id === fundId);
+                if (currentIndex !== -1) {
+                    currentPageData.splice(currentIndex, 1);
+                }
+
+                // 更新过滤选项
+                updateFilterOptions();
+
+                // 更新表格
+                updateTable();
 
                 // 更新统计数据和图表
                 updateStatistics();
